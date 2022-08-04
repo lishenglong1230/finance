@@ -1,6 +1,5 @@
-package com.example.finance.core.entity;
+package com.example.finance.core.pojo.entity;
 
-import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
@@ -14,7 +13,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * <p>
- * 用户账户
+ * 借款人上传资源表
  * </p>
  *
  * @author lishenglong
@@ -22,8 +21,8 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="UserAccount对象", description="用户账户")
-public class UserAccount implements Serializable {
+@ApiModel(value="BorrowerAttach对象", description="借款人上传资源表")
+public class BorrowerAttach implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,14 +30,17 @@ public class UserAccount implements Serializable {
       @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "用户id")
-    private Long userId;
+    @ApiModelProperty(value = "借款人id")
+    private Long borrowerId;
 
-    @ApiModelProperty(value = "帐户可用余额")
-    private BigDecimal amount;
+    @ApiModelProperty(value = "图片类型（idCard1：身份证正面，idCard2：身份证反面，house：房产证，car：车）")
+    private String imageType;
 
-    @ApiModelProperty(value = "冻结金额")
-    private BigDecimal freezeAmount;
+    @ApiModelProperty(value = "图片路径")
+    private String imageUrl;
+
+    @ApiModelProperty(value = "图片名称")
+    private String imageName;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;
@@ -50,9 +52,6 @@ public class UserAccount implements Serializable {
     @TableField("is_deleted")
     @TableLogic
     private Boolean deleted;
-
-    @ApiModelProperty(value = "版本号")
-    private Integer version;
 
 
 }

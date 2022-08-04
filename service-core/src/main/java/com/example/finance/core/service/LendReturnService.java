@@ -1,6 +1,6 @@
 package com.example.finance.core.service;
 
-import com.example.finance.core.entity.LendReturn;
+import com.example.finance.core.pojo.entity.LendReturn;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

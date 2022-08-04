@@ -1,6 +1,6 @@
 package com.example.finance.core.mapper;
 
-import com.example.finance.core.entity.UserInfo;
+import com.example.finance.core.pojo.entity.UserInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

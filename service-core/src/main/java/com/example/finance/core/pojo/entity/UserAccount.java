@@ -1,4 +1,4 @@
-package com.example.finance.core.entity;
+package com.example.finance.core.pojo.entity;
 
 import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * <p>
- * 交易流水表
+ * 用户账户
  * </p>
  *
  * @author lishenglong
@@ -22,8 +22,8 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="TransFlow对象", description="交易流水表")
-public class TransFlow implements Serializable {
+@ApiModel(value="UserAccount对象", description="用户账户")
+public class UserAccount implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -34,23 +34,11 @@ public class TransFlow implements Serializable {
     @ApiModelProperty(value = "用户id")
     private Long userId;
 
-    @ApiModelProperty(value = "用户名称")
-    private String userName;
+    @ApiModelProperty(value = "帐户可用余额")
+    private BigDecimal amount;
 
-    @ApiModelProperty(value = "交易单号")
-    private String transNo;
-
-    @ApiModelProperty(value = "交易类型（1：充值 2：提现 3：投标 4：投资回款 ...）")
-    private Integer transType;
-
-    @ApiModelProperty(value = "交易类型名称")
-    private String transTypeName;
-
-    @ApiModelProperty(value = "交易金额")
-    private BigDecimal transAmount;
-
-    @ApiModelProperty(value = "备注")
-    private String memo;
+    @ApiModelProperty(value = "冻结金额")
+    private BigDecimal freezeAmount;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;
@@ -62,6 +50,9 @@ public class TransFlow implements Serializable {
     @TableField("is_deleted")
     @TableLogic
     private Boolean deleted;
+
+    @ApiModelProperty(value = "版本号")
+    private Integer version;
 
 
 }

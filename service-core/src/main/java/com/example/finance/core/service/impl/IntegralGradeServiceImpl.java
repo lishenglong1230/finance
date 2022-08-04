@@ -1,6 +1,6 @@
 package com.example.finance.core.service.impl;
 
-import com.example.finance.core.entity.IntegralGrade;
+import com.example.finance.core.pojo.entity.IntegralGrade;
 import com.example.finance.core.mapper.IntegralGradeMapper;
 import com.example.finance.core.service.IntegralGradeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

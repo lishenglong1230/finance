@@ -2,16 +2,14 @@ package com.example.finance.core.controller.admin;
 
 
 import com.example.common.exception.Assert;
-import com.example.common.exception.BusinessException;
 import com.example.common.result.R;
 import com.example.common.result.ResponseEnum;
-import com.example.finance.core.entity.IntegralGrade;
+import com.example.finance.core.pojo.entity.IntegralGrade;
 import com.example.finance.core.service.IntegralGradeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.omg.CORBA.INTERNAL;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

@@ -1,4 +1,4 @@
-package com.example.finance.core.entity;
+package com.example.finance.core.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

@@ -1,4 +1,4 @@
-package com.example.finance.core.entity;
+package com.example.finance.core.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * <p>
- * 借款人上传资源表
+ * 用户绑定表
  * </p>
  *
  * @author lishenglong
@@ -21,8 +21,8 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="BorrowerAttach对象", description="借款人上传资源表")
-public class BorrowerAttach implements Serializable {
+@ApiModel(value="UserBind对象", description="用户绑定表")
+public class UserBind implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -30,17 +30,29 @@ public class BorrowerAttach implements Serializable {
       @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "借款人id")
-    private Long borrowerId;
+    @ApiModelProperty(value = "用户id")
+    private Long userId;
 
-    @ApiModelProperty(value = "图片类型（idCard1：身份证正面，idCard2：身份证反面，house：房产证，car：车）")
-    private String imageType;
+    @ApiModelProperty(value = "用户姓名")
+    private String name;
 
-    @ApiModelProperty(value = "图片路径")
-    private String imageUrl;
+    @ApiModelProperty(value = "身份证号")
+    private String idCard;
 
-    @ApiModelProperty(value = "图片名称")
-    private String imageName;
+    @ApiModelProperty(value = "银行卡号")
+    private String bankNo;
+
+    @ApiModelProperty(value = "银行类型")
+    private String bankType;
+
+    @ApiModelProperty(value = "手机号")
+    private String mobile;
+
+    @ApiModelProperty(value = "绑定账户协议号")
+    private String bindCode;
+
+    @ApiModelProperty(value = "状态")
+    private Integer status;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;

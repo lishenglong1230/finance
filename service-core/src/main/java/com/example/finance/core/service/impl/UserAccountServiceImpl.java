@@ -1,6 +1,6 @@
 package com.example.finance.core.service.impl;
 
-import com.example.finance.core.entity.UserAccount;
+import com.example.finance.core.pojo.entity.UserAccount;
 import com.example.finance.core.mapper.UserAccountMapper;
 import com.example.finance.core.service.UserAccountService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

@@ -1,4 +1,4 @@
-package com.example.finance.core.entity;
+package com.example.finance.core.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * <p>
- * 用户绑定表
+ * 数据字典
  * </p>
  *
  * @author lishenglong
@@ -21,38 +21,26 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="UserBind对象", description="用户绑定表")
-public class UserBind implements Serializable {
+@ApiModel(value="Dict对象", description="数据字典")
+public class Dict implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "编号")
+    @ApiModelProperty(value = "id")
       @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "用户id")
-    private Long userId;
+    @ApiModelProperty(value = "上级id")
+    private Long parentId;
 
-    @ApiModelProperty(value = "用户姓名")
+    @ApiModelProperty(value = "名称")
     private String name;
 
-    @ApiModelProperty(value = "身份证号")
-    private String idCard;
+    @ApiModelProperty(value = "值")
+    private Integer value;
 
-    @ApiModelProperty(value = "银行卡号")
-    private String bankNo;
-
-    @ApiModelProperty(value = "银行类型")
-    private String bankType;
-
-    @ApiModelProperty(value = "手机号")
-    private String mobile;
-
-    @ApiModelProperty(value = "绑定账户协议号")
-    private String bindCode;
-
-    @ApiModelProperty(value = "状态")
-    private Integer status;
+    @ApiModelProperty(value = "编码")
+    private String dictCode;
 
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;
@@ -60,10 +48,13 @@ public class UserBind implements Serializable {
     @ApiModelProperty(value = "更新时间")
     private LocalDateTime updateTime;
 
-    @ApiModelProperty(value = "逻辑删除(1:已删除，0:未删除)")
+    @ApiModelProperty(value = "删除标记（0:不可用 1:可用）")
     @TableField("is_deleted")
     @TableLogic
     private Boolean deleted;
 
+    @ApiModelProperty(value = "是否包含子节点")
+    @TableField(exist = false)// 表达逻辑概念 与物理表没有关系 当前字段不存在与数据库当中
+    private boolean hasChildren;
 
 }

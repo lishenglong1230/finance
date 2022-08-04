@@ -1,6 +1,6 @@
 package com.example.finance.core.service.impl;
 
-import com.example.finance.core.entity.TransFlow;
+import com.example.finance.core.pojo.entity.TransFlow;
 import com.example.finance.core.mapper.TransFlowMapper;
 import com.example.finance.core.service.TransFlowService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

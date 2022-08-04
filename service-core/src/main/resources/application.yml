@@ -16,4 +16,9 @@ spring:
 mybatis-plus: #mybatis
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-  mapper-locations: classpath:com/atguigu/srb/core/mapper/xml/*.xml
+  mapper-locations: classpath:com/example/finance/core/mapper/xml/*.xml
+
+# 设置日志级别
+#logging:
+#  level:
+#    root: ERROR

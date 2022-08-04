@@ -1,4 +1,4 @@
-package com.example.finance.core.entity;
+package com.example.finance.core.pojo.entity;
 
 import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.IdType;
