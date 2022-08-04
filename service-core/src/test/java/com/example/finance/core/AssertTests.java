@@ -1,4 +1,4 @@
-package com.example;
+package com.example.finance.core;
 
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import org.junit.Test;

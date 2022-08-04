@@ -1,4 +1,4 @@
-package com.example;
+package com.example.finance.core;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
