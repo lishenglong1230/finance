@@ -36,6 +36,20 @@
             <artifactId>aliyun-java-sdk-core</artifactId>
         </dependency>
 
+        <!--新版异步短信-->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>alibabacloud-dysmsapi20170525</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+        <!--  配置文件处理器  -->
+        <!--让自定义的配置在application.yaml进行自动提示-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
     </dependencies>
 
 </project>
