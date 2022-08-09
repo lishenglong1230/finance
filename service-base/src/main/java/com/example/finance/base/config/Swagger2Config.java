@@ -45,10 +45,10 @@ public class Swagger2Config {
     private ApiInfo adminApiInfo(){
 
         return new ApiInfoBuilder()
-                .title("尚融宝后台管理系统-API文档")
-                .description("本文档描述了尚融宝后台管理系统接口")
+                .title("金融后台管理系统-API文档")
+                .description("本文档描述了金融后台管理系统接口")
                 .version("1.0")
-                .contact(new Contact("lishenglong", "http://atguigu.com", "1215288388@qq.com"))
+                .contact(new Contact("lishenglong", "", "1215288388@qq.com"))
                 .build();
     }
 
@@ -57,10 +57,10 @@ public class Swagger2Config {
     private ApiInfo webApiInfo(){
 
         return new ApiInfoBuilder()
-                .title("尚融宝网站API文档")
-                .description("本文档描述了尚融宝网站接口")
+                .title("金融网站API文档")
+                .description("本文档描述了金融网站接口")
                 .version("1.0")
-                .contact(new Contact("lishenglong", "http://atguigu.com", "1215288388@qq.com"))
+                .contact(new Contact("lishenglong", "", "1215288388@qq.com"))
                 .build();
     }
 }

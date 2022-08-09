@@ -53,7 +53,7 @@ public class ApiSmsController {
         map.put("code",code);
 
         //调用aliyun发送验证码
-        smsService.send(phone, SmsProperties.TEMPLATE_CODE,map);
+        //smsService.send(phone, SmsProperties.TEMPLATE_CODE,map);
 
         //验证码存redis
         //放到验证码下面 防止存入redis验证码却没发送
