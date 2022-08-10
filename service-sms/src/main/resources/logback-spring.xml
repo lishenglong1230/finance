@@ -72,7 +72,7 @@
 -->
     <!-- 开发环境和测试环境 -->
     <springProfile name="dev,test">
-        <logger name="com.example" level="INFO">
+        <logger name="com.example" level="DEBUG">
             <appender-ref ref="CONSOLE" />
 <!--            <appender-ref ref="ROLLING_FILE" /> --> <!--设置滚动日志-->
         </logger>
