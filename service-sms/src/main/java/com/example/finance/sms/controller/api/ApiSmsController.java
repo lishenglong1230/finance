@@ -5,6 +5,7 @@ import com.example.common.result.R;
 import com.example.common.result.ResponseEnum;
 import com.example.common.util.RandomUtils;
 import com.example.common.util.RegexValidateUtils;
+import com.example.finance.sms.client.CoreUserInfoClient;
 import com.example.finance.sms.service.SmsService;
 import com.example.finance.sms.util.SmsProperties;
 import io.swagger.annotations.Api;
@@ -35,6 +36,8 @@ public class ApiSmsController {
     SmsService smsService;
     @Resource
     RedisTemplate redisTemplate;
+    @Resource
+    CoreUserInfoClient coreUserInfoClient;
 
     @ApiOperation("获取验证码")
     @GetMapping("/send/{phone}")
@@ -46,6 +49,11 @@ public class ApiSmsController {
         Assert.notEmpty(phone, ResponseEnum.MOBILE_NULL_ERROR);
         //校验手机号是否合法
         Assert.isTrue(RegexValidateUtils.checkCellphone(phone), ResponseEnum.MOBILE_ERROR);
+
+        //判断手机号是否已注册
+        boolean result = coreUserInfoClient.checkMobile(phone);
+        log.info(result?"已注册":"未注册");
+        Assert.isTrue(result==false, ResponseEnum.MOBILE_EXIST_ERROR);
 
         //组装短信模板参数
         Map<String ,Object> map = new HashMap<>();
