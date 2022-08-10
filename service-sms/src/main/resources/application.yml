@@ -20,6 +20,25 @@ spring:
         max-idle: 8     #最大空闲连接，默认8
         min-idle: 0     #最小空闲连接，默认0
 
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848 # nacos服务地址
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 10000 #连接超时配置
+        readTimeout: 600000 #执行超时配置
+  #开启Feign对Sentinel的支持
+  sentinel:
+    enabled: true
+
+logging:
+  level:
+    com.example.finance.sms.client.CoreUserInfoClient: DEBUG #以什么级别监控哪个接口 如果想打印远程调用full日志 必须以debug级别监控
+
 #阿里云短信
 aliyun:
   sms:
