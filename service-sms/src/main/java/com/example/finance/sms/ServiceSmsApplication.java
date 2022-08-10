@@ -2,6 +2,7 @@ package com.example.finance.sms;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @Date: 2022/7/29 15:55
  */
 @SpringBootApplication
+@EnableFeignClients
 @ComponentScan({"com.example.finance","com.example.common"})
 public class ServiceSmsApplication {
     public static void main(String[] args) {
