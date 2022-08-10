@@ -4,15 +4,22 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.common.exception.Assert;
 import com.example.common.result.ResponseEnum;
 import com.example.common.util.MD5;
+import com.example.finance.base.util.JwtUtils;
 import com.example.finance.core.mapper.UserAccountMapper;
+import com.example.finance.core.mapper.UserLoginRecordMapper;
 import com.example.finance.core.pojo.entity.UserAccount;
 import com.example.finance.core.pojo.entity.UserInfo;
 import com.example.finance.core.mapper.UserInfoMapper;
+import com.example.finance.core.pojo.entity.UserLoginRecord;
+import com.example.finance.core.pojo.vo.LoginVO;
 import com.example.finance.core.pojo.vo.RegisterVO;
+import com.example.finance.core.pojo.vo.UserInfoVO;
 import com.example.finance.core.service.UserInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
+import sun.security.krb5.internal.PAData;
 
 import javax.annotation.Resource;
 
@@ -29,6 +36,8 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
 
     @Resource
     UserAccountMapper userAccountMapper;
+    @Resource
+    UserLoginRecordMapper userLoginRecordMapper;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -54,5 +63,45 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         UserAccount userAccount = new UserAccount();
         userAccount.setUserId(userInfo.getId());//关联两表
         userAccountMapper.insert(userAccount);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public UserInfoVO login(LoginVO loginVO, String ip) {
+        String mobile = loginVO.getMobile();
+        String password = loginVO.getPassword();
+        Integer userType = loginVO.getUserType();
+        //判断用户是否存在
+        QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
+        userInfoQueryWrapper.eq("mobile",mobile)
+                            .eq("user_type",userType);
+        UserInfo userInfo = baseMapper.selectOne(userInfoQueryWrapper);
+        Assert.notNull(userInfo, ResponseEnum.LOGIN_MOBILE_ERROR);
+
+        //密码是否正确
+        Assert.equals(MD5.encrypt(password),userInfo.getPassword(), ResponseEnum.LOGIN_PASSWORD_ERROR);
+
+        //是否被禁用
+        Assert.equals(userInfo.getStatus(),userInfo.STATUS_NORMAL, ResponseEnum.LOGIN_LOKED_ERROR);
+
+        //记录登录日志
+        UserLoginRecord userLoginRecord = new UserLoginRecord();
+        userLoginRecord.setUserId(userInfo.getId());
+        userLoginRecord.setIp(ip);
+        userLoginRecordMapper.insert(userLoginRecord);
+
+        //生成token
+        String token = JwtUtils.createToken(userInfo.getId(), userInfo.getName());
+
+        //组装UserInfoVo
+        UserInfoVO userInfoVO = new UserInfoVO();
+        userInfoVO.setName(userInfo.getName());
+        userInfoVO.setNickName(userInfo.getNickName());
+        userInfoVO.setToken(token);
+        userInfoVO.setHeadImg(userInfo.getHeadImg());
+        userInfoVO.setMobile(mobile);
+        userInfoVO.setUserType(userType);
+
+        return userInfoVO;
     }
 }

@@ -42,7 +42,7 @@ public class IntegralGrade implements Serializable {
     @ApiModelProperty(value = "积分区间结束")
     private Integer integralEnd;
 
-    @ApiModelProperty(value = "借款额度")
+    @ApiModelProperty(value = "资金额度")
     private BigDecimal borrowAmount;
 
     @ApiModelProperty(value = "创建时间", example = "2021-01-01 08:00:00")
