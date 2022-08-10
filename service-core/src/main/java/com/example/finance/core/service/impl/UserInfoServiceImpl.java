@@ -1,6 +1,9 @@
 package com.example.finance.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.exception.Assert;
 import com.example.common.result.ResponseEnum;
 import com.example.common.util.MD5;
@@ -11,6 +14,7 @@ import com.example.finance.core.pojo.entity.UserAccount;
 import com.example.finance.core.pojo.entity.UserInfo;
 import com.example.finance.core.mapper.UserInfoMapper;
 import com.example.finance.core.pojo.entity.UserLoginRecord;
+import com.example.finance.core.pojo.query.UserInfoQuery;
 import com.example.finance.core.pojo.vo.LoginVO;
 import com.example.finance.core.pojo.vo.RegisterVO;
 import com.example.finance.core.pojo.vo.UserInfoVO;
@@ -103,5 +107,24 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         userInfoVO.setUserType(userType);
 
         return userInfoVO;
+    }
+
+    @Override
+    public IPage<UserInfo> listPage(Page<UserInfo> pageParam, UserInfoQuery userInfoQuery) {
+        if (userInfoQuery ==null){
+            return baseMapper.selectPage(pageParam,null);
+        }
+
+        String mobile = userInfoQuery.getMobile();
+        Integer status = userInfoQuery.getStatus();
+        Integer userType = userInfoQuery.getUserType();
+
+        QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(StringUtils.isNotBlank(mobile),"mobile",mobile)
+                    .eq(status != null,"status",status)
+                    .eq(userType != null,"user_Type",userType);
+
+        return baseMapper.selectPage(pageParam, queryWrapper);
+
     }
 }
