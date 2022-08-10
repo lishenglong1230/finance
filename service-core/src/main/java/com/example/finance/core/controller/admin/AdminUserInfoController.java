@@ -36,11 +36,26 @@ public class AdminUserInfoController {
             @ApiParam(value = "每页记录数", required = true)
             @PathVariable Long limit,
             @ApiParam(value = "查询对象", required = false)//可以不查询 显示所有数据
-            UserInfoQuery userInfoQuery){//get方式 不可以用RequestBody来传
-        Page<UserInfo> pageParam = new Page<>(page,limit);
+                    UserInfoQuery userInfoQuery) {//get方式 不可以用RequestBody来传
+        Page<UserInfo> pageParam = new Page<>(page, limit);
         //分页信息都会封装到IPage
-        IPage<UserInfo> pageModel = userInfoService.listPage(pageParam,userInfoQuery);
-        return R.ok().data("pageModel",pageModel);
+        IPage<UserInfo> pageModel = userInfoService.listPage(pageParam, userInfoQuery);
+        return R.ok().data("pageModel", pageModel);
+    }
+
+    @ApiOperation("锁定和解锁")
+    @PostMapping("/lock/{id}/{status}")
+    public R lock(
+            @ApiParam(value = "用户id", required = true)
+            @PathVariable("id") Long id,
+
+            @ApiParam(value = "锁定状态（0：锁定 1：解锁）", required = true)
+            @PathVariable("status") Integer status){
+
+        //status传什么就改成什么
+        userInfoService.lock(id,status);
+        return R.ok().message(status==1?"解锁成功":"锁定成功");
+
     }
 
 }
