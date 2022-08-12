@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/core/userInfo")
 @Slf4j
-@CrossOrigin
+//@CrossOrigin
 public class UserInfoController {
     @Resource
     RedisTemplate redisTemplate;//RedisTemplate<String, String> redisTemplate; 不要用泛型 redis存的是json格式"xxxx" 必须强转String
