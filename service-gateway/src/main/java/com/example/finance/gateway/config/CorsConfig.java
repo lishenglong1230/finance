@@ -1,4 +1,4 @@
-package com.example.finance.config;
+package com.example.finance.gateway.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
