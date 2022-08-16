@@ -44,7 +44,7 @@ public class UserBindController {
 
         //根据userId做账户绑定,最终生成一个动态表单的字符串
         String formStr = userBindService.commitBindUser(userBindVO,userId);
-        return R.ok().data("formstr",formStr);
+        return R.ok().data("formStr",formStr);
 
     }
 
