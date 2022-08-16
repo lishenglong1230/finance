@@ -108,6 +108,26 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
 
     }
 
+    @Override
+    public String getNameByParentDictCodeAndValue(String dictCode, Integer value) {
+
+        QueryWrapper<Dict> dictQueryWrapper = new QueryWrapper<>();
+        dictQueryWrapper.eq("dict_code",dictCode);
+        Dict parentDict = baseMapper.selectOne(dictQueryWrapper);
+        if(parentDict ==null){
+            return "";
+        }
+        dictQueryWrapper = new QueryWrapper<>();
+        dictQueryWrapper.eq("parent_id",parentDict.getId())
+                        .eq("value",value);
+        Dict dict = baseMapper.selectOne(dictQueryWrapper);
+
+        if (dict==null){
+            return "";
+        }
+        return dict.getName();
+    }
+
     private boolean hasChildren(Long id) {
         QueryWrapper<Dict> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("parent_Id", id);
