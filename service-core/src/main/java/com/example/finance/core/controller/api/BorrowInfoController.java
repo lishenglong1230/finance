@@ -32,6 +32,8 @@ public class BorrowInfoController {
     @Resource
     private BorrowInfoService borrowInfoService;
 
+    @ApiOperation("获取借款额度")
+    @GetMapping("/auth/getBorrowAmount")
     public R getBorrowAmount(HttpServletRequest request){
         String token = request.getHeader("token");
         Long userId = JwtUtils.getUserId(token);

@@ -1,7 +1,9 @@
 package com.example.finance.core.service;
 
+import com.example.finance.core.pojo.entity.BorrowInfo;
 import com.example.finance.core.pojo.entity.Lend;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.finance.core.pojo.vo.BorrowInfoApprovalVO;
 
 /**
  * <p>
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface LendService extends IService<Lend> {
 
+    void createLend(BorrowInfoApprovalVO borrowInfoApprovalVO, BorrowInfo borrowInfo);
 }

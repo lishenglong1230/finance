@@ -2,26 +2,38 @@ package com.example.finance.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.exception.Assert;
 import com.example.common.result.ResponseEnum;
 import com.example.finance.core.enums.BorrowAuthEnum;
 import com.example.finance.core.enums.BorrowInfoStatusEnum;
 import com.example.finance.core.enums.BorrowerStatusEnum;
 import com.example.finance.core.enums.UserBindEnum;
+import com.example.finance.core.mapper.BorrowerMapper;
 import com.example.finance.core.mapper.IntegralGradeMapper;
 import com.example.finance.core.mapper.UserInfoMapper;
 import com.example.finance.core.pojo.entity.BorrowInfo;
 import com.example.finance.core.mapper.BorrowInfoMapper;
+import com.example.finance.core.pojo.entity.Borrower;
 import com.example.finance.core.pojo.entity.IntegralGrade;
 import com.example.finance.core.pojo.entity.UserInfo;
+import com.example.finance.core.pojo.vo.BorrowInfoApprovalVO;
+import com.example.finance.core.pojo.vo.BorrowerDetailVO;
 import com.example.finance.core.service.BorrowInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.finance.core.service.BorrowerService;
+import com.example.finance.core.service.DictService;
+import com.example.finance.core.service.LendService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.awt.geom.QuadCurve2D;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -38,6 +50,15 @@ public class BorrowInfoServiceImpl extends ServiceImpl<BorrowInfoMapper, BorrowI
     private UserInfoMapper userInfoMapper;
     @Resource
     private IntegralGradeMapper integralGradeMapper;
+    @Resource
+    private DictService dictService;
+    @Resource
+    private BorrowerMapper borrowerMapper;
+    @Resource
+    private BorrowerService borrowerService;
+    @Resource
+    private LendService lendService;
+
 
     @Override
     public BigDecimal getBorrowAmount(Long userId) {
@@ -58,6 +79,7 @@ public class BorrowInfoServiceImpl extends ServiceImpl<BorrowInfoMapper, BorrowI
         return integralGrade.getBorrowAmount();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void saveBorrowInfo(BorrowInfo borrowInfo, Long userId) {
         //获取userInfo信息
@@ -95,6 +117,67 @@ public class BorrowInfoServiceImpl extends ServiceImpl<BorrowInfoMapper, BorrowI
 
         Integer status = (Integer)objects.get(0);
         return status;
+
+    }
+
+    @Override
+    public List<BorrowInfo> selectList(Long offset, Long limit) {
+
+        List<BorrowInfo> borrowInfoList = baseMapper.selectBorrowInfoList(offset,limit);
+        borrowInfoList.forEach(borrowInfo -> {
+            String returnMethod = dictService.getNameByParentDictCodeAndValue("returnMethod", borrowInfo.getReturnMethod());
+            String moneyUse = dictService.getNameByParentDictCodeAndValue("moneyUse", borrowInfo.getMoneyUse());
+            String status = BorrowInfoStatusEnum.getMsgByStatus(borrowInfo.getStatus());
+
+            borrowInfo.getParam().put("returnMethod",returnMethod);
+            borrowInfo.getParam().put("moneyUse",moneyUse);
+            borrowInfo.getParam().put("status",status);
+
+        });
+        return borrowInfoList;
+    }
+
+    @Override
+    public Map<String, Object> getBorrowInfoDetail(Long id) {
+
+        //查询借款对象：BorrowInfo
+        BorrowInfo borrowInfo = baseMapper.selectById(id);
+        String returnMethod = dictService.getNameByParentDictCodeAndValue("returnMethod", borrowInfo.getReturnMethod());
+        String moneyUse = dictService.getNameByParentDictCodeAndValue("moneyUse", borrowInfo.getMoneyUse());
+        String status = BorrowInfoStatusEnum.getMsgByStatus(borrowInfo.getStatus());
+        borrowInfo.getParam().put("returnMethod",returnMethod);
+        borrowInfo.getParam().put("moneyUse",moneyUse);
+        borrowInfo.getParam().put("status",status);
+
+        //查询借款人对象：Borrower(BorrowerDetailVO)
+        QueryWrapper<Borrower> borrowerQueryWrapper = new QueryWrapper<>();
+        borrowerQueryWrapper.eq("user_id",borrowInfo.getUserId());
+        Borrower borrower = borrowerMapper.selectOne(borrowerQueryWrapper);
+        BorrowerDetailVO borrowerDetailVO = borrowerService.getBorrowerDetailVOById(borrower.getId());
+
+        //组装稽核结果
+        Map<String, Object> result = new HashMap<>();
+        result.put("borrowInfo",borrowInfo);
+        result.put("borrowerDetailVO",borrowerDetailVO);
+        return result;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void approval(BorrowInfoApprovalVO borrowInfoApprovalVO) {
+
+        //修改借款审核的状态 borrow_info
+        Long borrowInfoId = borrowInfoApprovalVO.getId();
+        BorrowInfo borrowInfo = baseMapper.selectById(borrowInfoId);
+        borrowInfo.setStatus(borrowInfoApprovalVO.getStatus());
+        baseMapper.updateById(borrowInfo);
+
+        //产生新的标的记录 lend
+        if (borrowInfoApprovalVO.getStatus().intValue() == BorrowInfoStatusEnum.CHECK_OK.getStatus().intValue()){
+            //创建新标的
+            lendService.createLend(borrowInfoApprovalVO,borrowInfo);
+        }
+
 
     }
 }

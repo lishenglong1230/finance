@@ -2,6 +2,9 @@ package com.example.finance.core.mapper;
 
 import com.example.finance.core.pojo.entity.BorrowInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +15,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2022-07-29
  */
 public interface BorrowInfoMapper extends BaseMapper<BorrowInfo> {
-
+    List<BorrowInfo> selectBorrowInfoList(@Param("offset") Long offset,@Param("limit") Long limit);
 }
