@@ -15,5 +15,8 @@ import java.util.List;
  * @since 2022-07-29
  */
 public interface BorrowInfoMapper extends BaseMapper<BorrowInfo> {
-    List<BorrowInfo> selectBorrowInfoList(@Param("offset") Long offset,@Param("limit") Long limit);
+
+    //List<BorrowInfo> selectBorrowInfoList(@Param("offset") Long offset,@Param("limit") Long limit);
+
+    List<BorrowInfo> selectBorrowInfoList();
 }

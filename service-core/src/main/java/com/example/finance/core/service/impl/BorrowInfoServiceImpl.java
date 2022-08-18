@@ -121,6 +121,22 @@ public class BorrowInfoServiceImpl extends ServiceImpl<BorrowInfoMapper, BorrowI
     }
 
     @Override
+    public List<BorrowInfo> selectList() {
+        List<BorrowInfo> borrowInfoList = baseMapper.selectBorrowInfoList();
+        borrowInfoList.forEach(borrowInfo -> {
+            String returnMethod = dictService.getNameByParentDictCodeAndValue("returnMethod", borrowInfo.getReturnMethod());
+            String moneyUse = dictService.getNameByParentDictCodeAndValue("moneyUse", borrowInfo.getMoneyUse());
+            String status = BorrowInfoStatusEnum.getMsgByStatus(borrowInfo.getStatus());
+            borrowInfo.getParam().put("returnMethod", returnMethod);
+            borrowInfo.getParam().put("moneyUse", moneyUse);
+            borrowInfo.getParam().put("status", status);
+        });
+
+        return borrowInfoList;
+    }
+
+
+   /* @Override
     public List<BorrowInfo> selectList(Long offset, Long limit) {
 
         List<BorrowInfo> borrowInfoList = baseMapper.selectBorrowInfoList(offset,limit);
@@ -135,7 +151,7 @@ public class BorrowInfoServiceImpl extends ServiceImpl<BorrowInfoMapper, BorrowI
 
         });
         return borrowInfoList;
-    }
+    }*/
 
     @Override
     public Map<String, Object> getBorrowInfoDetail(Long id) {
@@ -158,7 +174,7 @@ public class BorrowInfoServiceImpl extends ServiceImpl<BorrowInfoMapper, BorrowI
         //组装稽核结果
         Map<String, Object> result = new HashMap<>();
         result.put("borrowInfo",borrowInfo);
-        result.put("borrowerDetailVO",borrowerDetailVO);
+        result.put("borrower",borrowerDetailVO);
         return result;
     }
 

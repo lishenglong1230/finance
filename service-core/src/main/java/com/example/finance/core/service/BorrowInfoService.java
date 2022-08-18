@@ -26,7 +26,9 @@ public interface BorrowInfoService extends IService<BorrowInfo> {
 
     Integer getStatusByUserId(Long userId);
 
-    List<BorrowInfo> selectList(Long offset,Long limit);
+    //List<BorrowInfo> selectList(Long offset,Long limit);
+
+    List<BorrowInfo> selectList();
 
     Map<String, Object> getBorrowInfoDetail(Long id);
 

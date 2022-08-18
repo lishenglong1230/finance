@@ -1,19 +1,31 @@
 package com.example.finance.core.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.finance.core.enums.LendStatusEnum;
+import com.example.finance.core.mapper.BorrowerMapper;
 import com.example.finance.core.pojo.entity.BorrowInfo;
+import com.example.finance.core.pojo.entity.Borrower;
 import com.example.finance.core.pojo.entity.Lend;
 import com.example.finance.core.mapper.LendMapper;
 import com.example.finance.core.pojo.vo.BorrowInfoApprovalVO;
+import com.example.finance.core.pojo.vo.BorrowerDetailVO;
+import com.example.finance.core.service.BorrowerService;
+import com.example.finance.core.service.DictService;
 import com.example.finance.core.service.LendService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.finance.core.util.LendNoUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -25,6 +37,13 @@ import java.time.format.DateTimeFormatter;
  */
 @Service
 public class LendServiceImpl extends ServiceImpl<LendMapper, Lend> implements LendService {
+
+    @Resource
+    private DictService dictService;
+    @Resource
+    private BorrowerMapper borrowerMapper;
+    @Resource
+    private BorrowerService borrowerService;
 
     @Override
     public void createLend(BorrowInfoApprovalVO borrowInfoApprovalVO, BorrowInfo borrowInfo) {
@@ -67,5 +86,54 @@ public class LendServiceImpl extends ServiceImpl<LendMapper, Lend> implements Le
 
         //写入数据库
         baseMapper.insert(lend);
+    }
+
+   /* @Override
+    public IPage<Lend> listPage(Page<Lend> lendPage) {
+
+        Page<Lend> page = baseMapper.selectPage(lendPage, null);
+        List<Lend> lendList = page.getRecords();
+        lendList.forEach(lend -> {
+            String returnMethod = dictService.getNameByParentDictCodeAndValue("returnMethod",lend.getReturnMethod());
+            String status = LendStatusEnum.getMsgByStatus(lend.getStatus());
+            lend.getParam().put("returnMethod",returnMethod);
+            lend.getParam().put("status",status);
+        });
+        return page;
+
+    }*/
+
+    @Override
+    public List<Lend> selectList() {
+        List<Lend> lendList = baseMapper.selectList(null);
+        lendList.forEach(lend -> {
+            String returnMethod = dictService.getNameByParentDictCodeAndValue("returnMethod", lend.getReturnMethod());
+            String status = LendStatusEnum.getMsgByStatus(lend.getStatus());
+            lend.getParam().put("returnMethod", returnMethod);
+            lend.getParam().put("status", status);
+        });
+        return lendList;
+    }
+
+    @Override
+    public Map<String, Object> getLendDetail(Long id) {
+        //查询 lend
+        Lend lend = baseMapper.selectById(id);
+        String returnMethod = dictService.getNameByParentDictCodeAndValue("returnMethod", lend.getReturnMethod());
+        String status = LendStatusEnum.getMsgByStatus(lend.getStatus());
+        lend.getParam().put("returnMethod", returnMethod);
+        lend.getParam().put("status", status);
+
+        //查询借款人对象：Borrower(BorrowerDetailVO)
+        QueryWrapper<Borrower> borrowerQueryWrapper = new QueryWrapper<>();
+        borrowerQueryWrapper.eq("user_id",lend.getUserId());
+        Borrower borrower = borrowerMapper.selectOne(borrowerQueryWrapper);
+        BorrowerDetailVO borrowerDetailVO = borrowerService.getBorrowerDetailVOById(borrower.getId());
+
+        //组装集合结果
+        Map<String,Object> result = new HashMap<>();
+        result.put("lend",lend);
+        result.put("borrower",borrowerDetailVO);
+        return result;
     }
 }

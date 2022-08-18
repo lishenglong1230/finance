@@ -29,16 +29,24 @@ public class AdminBorrowInfoController {
     @Resource
     private BorrowInfoService borrowInfoService;
 
-    @ApiOperation("借款信息列表")
-    @GetMapping("/list/{page}/{limit}")
-    public R list(
-            @ApiParam(value = "当前页码", required = true)
-            @PathVariable Long page,
+//    @ApiOperation("借款信息列表")
+//    @GetMapping("/list/{page}/{limit}")
+//    public R list(
+//            @ApiParam(value = "当前页码", required = true)
+//            @PathVariable Long page,
+//
+//            @ApiParam(value = "每页记录数", required = true)
+//            @PathVariable Long limit){
+//        List<BorrowInfo> borrowInfoList=borrowInfoService.selectList(page,limit);
+//        return R.ok().data("borrowInfoList",borrowInfoList);
+//    }
 
-            @ApiParam(value = "每页记录数", required = true)
-            @PathVariable Long limit){
-        List<BorrowInfo> borrowInfoList=borrowInfoService.selectList(page,limit);
-        return R.ok().data("borrowInfoList",borrowInfoList);
+
+    @ApiOperation("借款信息列表")
+    @GetMapping("/list")
+    public R list() {
+        List<BorrowInfo>  borrowInfoList = borrowInfoService.selectList();
+        return R.ok().data("list", borrowInfoList);
     }
 
     @ApiOperation("借款信息详情")
