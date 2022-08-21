@@ -1,5 +1,6 @@
 package com.example.finance.core.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.finance.core.enums.TransTypeEnum;
 import com.example.finance.core.hfb.FormHelper;
 import com.example.finance.core.hfb.HfbConst;
@@ -96,5 +97,15 @@ public class UserAccountServiceImpl extends ServiceImpl<UserAccountMapper, UserA
 
         return "success";
 
+    }
+
+    @Override
+    public BigDecimal getAccount(Long userId) {
+
+        QueryWrapper<UserAccount> userAccountQueryWrapper = new QueryWrapper<>();
+        userAccountQueryWrapper.eq("user_id",userId);
+        UserAccount userAccount = baseMapper.selectOne(userAccountQueryWrapper);
+
+        return userAccount.getAmount();
     }
 }

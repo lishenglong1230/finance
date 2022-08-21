@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.finance.core.enums.LendStatusEnum;
+import com.example.finance.core.enums.ReturnMethodEnum;
 import com.example.finance.core.mapper.BorrowerMapper;
 import com.example.finance.core.pojo.entity.BorrowInfo;
 import com.example.finance.core.pojo.entity.Borrower;
@@ -15,7 +16,7 @@ import com.example.finance.core.service.BorrowerService;
 import com.example.finance.core.service.DictService;
 import com.example.finance.core.service.LendService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.finance.core.util.LendNoUtils;
+import com.example.finance.core.util.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -64,7 +65,7 @@ public class LendServiceImpl extends ServiceImpl<LendMapper, Lend> implements Le
 
         //起息日期
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate lendStartDate = LocalDate.parse(borrowInfoApprovalVO.getLendStartDate(),dateTimeFormatter);
+        LocalDate lendStartDate = LocalDate.parse(borrowInfoApprovalVO.getLendStartDate(), dateTimeFormatter);
         lend.setLendStartDate(lendStartDate);
         //结束日期
         LocalDate lendEndDate = lendStartDate.plusMonths(borrowInfo.getPeriod());
@@ -126,14 +127,34 @@ public class LendServiceImpl extends ServiceImpl<LendMapper, Lend> implements Le
 
         //查询借款人对象：Borrower(BorrowerDetailVO)
         QueryWrapper<Borrower> borrowerQueryWrapper = new QueryWrapper<>();
-        borrowerQueryWrapper.eq("user_id",lend.getUserId());
+        borrowerQueryWrapper.eq("user_id", lend.getUserId());
         Borrower borrower = borrowerMapper.selectOne(borrowerQueryWrapper);
         BorrowerDetailVO borrowerDetailVO = borrowerService.getBorrowerDetailVOById(borrower.getId());
 
         //组装集合结果
-        Map<String,Object> result = new HashMap<>();
-        result.put("lend",lend);
-        result.put("borrower",borrowerDetailVO);
+        Map<String, Object> result = new HashMap<>();
+        result.put("lend", lend);
+        result.put("borrower", borrowerDetailVO);
         return result;
+    }
+
+    @Override
+    public BigDecimal getInterestCount(BigDecimal invest, BigDecimal yearRate, Integer totalmonth, Integer returnMethod) {
+
+        BigDecimal interestCount;
+        if (returnMethod.intValue() == ReturnMethodEnum.ONE.getMethod()) {
+            interestCount = Amount1Helper.getInterestCount(invest, yearRate, totalmonth);
+
+        } else if (returnMethod.intValue() == ReturnMethodEnum.TWO.getMethod()) {
+            interestCount = Amount2Helper.getInterestCount(invest, yearRate, totalmonth);
+
+        } else if (returnMethod.intValue() == ReturnMethodEnum.THREE.getMethod()) {
+            interestCount = Amount3Helper.getInterestCount(invest, yearRate, totalmonth);
+
+        } else{
+            interestCount = Amount4Helper.getInterestCount(invest, yearRate, totalmonth);
+
+        }
+        return interestCount;
     }
 }

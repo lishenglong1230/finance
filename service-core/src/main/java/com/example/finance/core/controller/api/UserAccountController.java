@@ -10,11 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServlet;
@@ -38,6 +34,8 @@ public class UserAccountController {
     @Resource
     private UserAccountService userAccountService;
 
+    @ApiOperation("充值")
+    @PostMapping("/auth/commitCharge/{chargeAmt}")
     public R commitCharge(
             @ApiParam(value = "重置金额",required = true)
             @PathVariable BigDecimal chargeAmt, HttpServletRequest request){
@@ -69,6 +67,15 @@ public class UserAccountController {
             return "fail";
         }
 
+    }
+
+    @ApiOperation("查询账户余额")
+    @GetMapping("/auth/getAccount")
+    public R getAccount(HttpServletRequest request){
+        String token = request.getHeader("token");
+        Long userId = JwtUtils.getUserId(token);
+        BigDecimal account = userAccountService.getAccount(userId);
+        return R.ok().data("account", account);
     }
 }
 
