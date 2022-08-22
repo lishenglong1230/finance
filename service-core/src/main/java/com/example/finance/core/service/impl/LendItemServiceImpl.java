@@ -1,23 +1,26 @@
 package com.example.finance.core.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.common.exception.Assert;
 import com.example.common.result.ResponseEnum;
 import com.example.finance.core.enums.LendStatusEnum;
+import com.example.finance.core.enums.TransTypeEnum;
 import com.example.finance.core.hfb.FormHelper;
 import com.example.finance.core.hfb.HfbConst;
 import com.example.finance.core.hfb.RequestHelper;
 import com.example.finance.core.mapper.LendItemMapper;
 import com.example.finance.core.mapper.LendMapper;
+import com.example.finance.core.mapper.TransFlowMapper;
+import com.example.finance.core.mapper.UserAccountMapper;
+import com.example.finance.core.pojo.bo.TransFlowBO;
 import com.example.finance.core.pojo.entity.Lend;
 import com.example.finance.core.pojo.entity.LendItem;
 import com.example.finance.core.pojo.vo.InvestVO;
-import com.example.finance.core.service.LendItemService;
-import com.example.finance.core.service.LendService;
-import com.example.finance.core.service.UserAccountService;
-import com.example.finance.core.service.UserBindService;
+import com.example.finance.core.service.*;
 import com.example.finance.core.util.LendNoUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -44,6 +47,10 @@ public class LendItemServiceImpl extends ServiceImpl<LendItemMapper, LendItem> i
     private UserBindService userBindService;
     @Resource
     private LendService lendService;
+    @Resource
+    TransFlowService transFlowService;
+    @Resource
+    private UserAccountMapper userAccountMapper;
 
     @Override
     public String commitInvest(InvestVO investVO) {
@@ -127,16 +134,57 @@ public class LendItemServiceImpl extends ServiceImpl<LendItemMapper, LendItem> i
 
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void notify(Map<String, Object> paramMap) {
+        //幂等性返回
+        String agentBillNo = (String)paramMap.get("agentBillNo");
+        boolean result = transFlowService.isSaveTransFlow(agentBillNo);
+        if (result){
+            log.warn("幂等性返回");
+            return;
+        }
 
         //修改账户金额：从余额中减去投资金额，在冻结金额中增加投资金额
+        String voteBindCode = (String)paramMap.get("voteBindCode");
+        String voteAmt = (String) paramMap.get("voteAmt");
+        userAccountMapper.updateAccount(
+                voteBindCode,
+                new BigDecimal("-"+voteAmt),
+                new BigDecimal(voteAmt));
 
         //修改投资金额的状态
+        LendItem lendItem = this.getByLendItemNo(agentBillNo);
+        lendItem.setStatus(1);
+        baseMapper.updateById(lendItem);
 
         //修改标的记录：投资人数、已投金额
+        Long lendId = lendItem.getLendId();
+        Lend lend = lendMapper.selectById(lendId);
+        lend.setInvestNum(lend.getInvestNum() + 1);
+        lend.setInvestAmount(lend.getInvestAmount().add(lendItem.getInvestAmount()));
+        lendMapper.updateById(lend);
 
         //新增交易流水
+        TransFlowBO transFlowBO = new TransFlowBO(
+                agentBillNo,
+                voteBindCode,
+                new BigDecimal(voteAmt),
+                TransTypeEnum.INVEST_LOCK,
+                "项目编号" + lend.getLendNo() + "项目名称" + lend.getTitle()
+        );
+        transFlowService.saveTransFlow(transFlowBO);
 
+    }
+
+    /**
+     * 根据流水号获取投资记录
+     * @param lendItemNo
+     * @return
+     */
+    private LendItem getByLendItemNo(String lendItemNo){
+        QueryWrapper<LendItem> lendItemQueryWrapper = new QueryWrapper<>();
+        lendItemQueryWrapper.eq("lend_item_no",lendItemNo);
+        return baseMapper.selectOne(lendItemQueryWrapper);
     }
 }
