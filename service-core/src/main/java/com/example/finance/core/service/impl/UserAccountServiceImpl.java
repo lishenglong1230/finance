@@ -77,6 +77,7 @@ public class UserAccountServiceImpl extends ServiceImpl<UserAccountMapper, UserA
         String bindCode = (String)paramMap.get("bindCode");
         String chargeAmt = (String)paramMap.get("chargeAmt");
 
+        //userAccountMapper.update(); 可以返回integer 判断是否更新成功
         baseMapper.updateAccount(bindCode,new BigDecimal(chargeAmt),new BigDecimal(0));
         //记录账户流水
         TransFlowBO transFlowBO = new TransFlowBO(
