@@ -132,7 +132,6 @@ public class UserAccountServiceImpl extends ServiceImpl<UserAccountMapper, UserA
         Assert.isTrue(account.doubleValue()>=fetchAmt.doubleValue(),
                 ResponseEnum.NOT_SUFFICIENT_FUNDS_ERROR);//余额不足
 
-
         String bindCode = userBindService.getBindCodeByUserId(userId);
 
         Map<String, Object> paramMap = new HashMap<>();

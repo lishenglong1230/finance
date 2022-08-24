@@ -25,4 +25,5 @@ public interface UserAccountService extends IService<UserAccount> {
     String commitWithdraw(BigDecimal fetchAmt, Long userId);
 
     void notifyWithdraw(Map<String, Object> paramMap);
+
 }
