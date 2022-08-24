@@ -51,6 +51,7 @@ public class UserAccountServiceImpl extends ServiceImpl<UserAccountMapper, UserA
     @Resource
     private UserAccountService userAccountService;
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public String commitCharge(BigDecimal chargeAmt, Long userId) {
 
@@ -122,6 +123,7 @@ public class UserAccountServiceImpl extends ServiceImpl<UserAccountMapper, UserA
         return userAccount.getAmount();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public String commitWithdraw(BigDecimal fetchAmt, Long userId) {
 
@@ -150,6 +152,7 @@ public class UserAccountServiceImpl extends ServiceImpl<UserAccountMapper, UserA
         return formStr;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void notifyWithdraw(Map<String, Object> paramMap) {
         //幂等判断
@@ -161,7 +164,7 @@ public class UserAccountServiceImpl extends ServiceImpl<UserAccountMapper, UserA
             return;
         }
         //账户同步
-        String bindCode = (String)paramMap.get("bind_code");
+        String bindCode = (String)paramMap.get("bindCode");
         String fetchAmt = (String) paramMap.get("fetchAmt");
         baseMapper.updateAccount(bindCode,new BigDecimal(fetchAmt).negate(),new BigDecimal(0));
 
