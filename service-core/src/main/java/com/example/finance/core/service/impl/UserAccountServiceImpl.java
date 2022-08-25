@@ -3,6 +3,7 @@ package com.example.finance.core.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.common.exception.Assert;
 import com.example.common.result.ResponseEnum;
+import com.example.finance.base.dto.SmsDTO;
 import com.example.finance.core.enums.TransTypeEnum;
 import com.example.finance.core.hfb.FormHelper;
 import com.example.finance.core.hfb.HfbConst;
@@ -18,6 +19,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.finance.core.service.UserBindService;
 import com.example.finance.core.service.UserInfoService;
 import com.example.finance.core.util.LendNoUtils;
+import com.example.finance.rabbitutil.constant.MQConst;
+import com.example.finance.rabbitutil.service.MQService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.stereotype.Service;
@@ -50,6 +53,12 @@ public class UserAccountServiceImpl extends ServiceImpl<UserAccountMapper, UserA
 
     @Resource
     private UserAccountService userAccountService;
+
+    @Resource
+    private UserInfoService userInfoService;
+
+    @Resource
+    private MQService mqService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -108,6 +117,17 @@ public class UserAccountServiceImpl extends ServiceImpl<UserAccountMapper, UserA
         } catch (InterruptedException e) {
             e.printStackTrace();
         }*/
+
+        //发消息
+        String mobile = userInfoService.getMobileByBindCode(bindCode);
+        SmsDTO smsDTO = new SmsDTO();
+        smsDTO.setMessage(mobile);
+        smsDTO.setMessage("充值成功");
+        mqService.sendMessage(
+                MQConst.EXCHANGE_TOPIC_SMS,
+                MQConst.ROUTING_SMS_ITEM,
+                smsDTO
+        );
 
         return "success";
 

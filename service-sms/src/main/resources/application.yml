@@ -25,6 +25,13 @@ spring:
       discovery:
         server-addr: localhost:8848 # nacos服务地址
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    virtual-host: /finance
+    username: finance
+    password: 123
+
 feign:
   client:
     config:
