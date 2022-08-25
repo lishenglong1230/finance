@@ -11,6 +11,7 @@
         <module>service-oss</module>
         <module>service-gateway</module>
         <module>rabbit-mq</module>
+        <module>hfb</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
