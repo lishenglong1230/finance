@@ -8,6 +8,7 @@ import com.example.common.util.RegexValidateUtils;
 import com.example.finance.base.util.JwtUtils;
 import com.example.finance.core.pojo.vo.LoginVO;
 import com.example.finance.core.pojo.vo.RegisterVO;
+import com.example.finance.core.pojo.vo.UserIndexVO;
 import com.example.finance.core.pojo.vo.UserInfoVO;
 import com.example.finance.core.service.UserInfoService;
 import io.swagger.annotations.Api;
@@ -94,6 +95,15 @@ public class UserInfoController {
     public boolean checkMobile(@PathVariable String mobile){
         Boolean isExist = userInfoService.checkMobile(mobile);
         return isExist;
+    }
+
+    @ApiOperation("获取个人空间用户信息")
+    @GetMapping("/auth/getIndexUserInfo")
+    public R getIndexUserInfo(HttpServletRequest request) {
+        String token = request.getHeader("token");
+        Long userId = JwtUtils.getUserId(token);
+        UserIndexVO userIndexVO = userInfoService.getIndexUserInfo(userId);
+        return R.ok().data("userIndexVO", userIndexVO);
     }
 
 }
