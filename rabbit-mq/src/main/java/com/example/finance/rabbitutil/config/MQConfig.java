@@ -17,4 +17,5 @@ public class MQConfig {
         //json字符串转换器
         return new Jackson2JsonMessageConverter();
     }
+
 }
